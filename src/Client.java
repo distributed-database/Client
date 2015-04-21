@@ -17,29 +17,41 @@ public class Client {
 
 	/**
 	 * @param args
-	 * @throws UnknownHostException 
-	 * @throws IOException 
+	 * @throws Exception 
 	 * @throws JSONException 
 	 */
 	
 	
-	public static void main(String[] args) throws UnknownHostException, IOException  {
-		
-		UpdateStatistics statistics = new UpdateStatistics();
-		statistics.run();
-		
-		ReplyServer reply = new ReplyServer();
-		reply.run();
-		
-		
-		Socket serverSocket = new Socket("192.168.40.44",9000);
-		OutputStream outputStream = serverSocket.getOutputStream();
-		DataOutputStream dout=new DataOutputStream(outputStream);
-		dout.writeUTF("TEST MESSAGE");
-		dout.flush();  
-		outputStream.close();
-		dout.close();
-		serverSocket.close();
+	public static void main(String[] args) throws Exception  {
+		System.out.println("Client Machine Started....");
+	  	
+	  	 UpdateStatistics statistics = new UpdateStatistics();
+	  	 statistics.run();
+	  	
+	  	 String replyString = null;
+	  	 ReplyServer reply = new ReplyServer();
+	  	 replyString =  reply.run();
+	  	 System.out.println("Update for server ready.");
+
+	  	
+	  	 System.out.println("Connecting to server at port 9000....");
+
+	  	 Socket serverSocket = new Socket("192.168.40.44",9000);
+	  	 OutputStream outputStream = serverSocket.getOutputStream();
+	  	 DataOutputStream dout=new DataOutputStream(outputStream);
+	  	 System.out.println("Connected to server");
+	  	 System.out.println("Update sending to server....");
+	  	 System.out.println("Update sent.");
+
+	  	 dout.writeUTF(replyString);
+	  	 dout.flush();  
+	  	 outputStream.close();
+	  	 dout.close();
+	  	 serverSocket.close();
+	  	
+	  	
+
+
 		
 		
 		

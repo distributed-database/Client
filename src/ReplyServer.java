@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.json.JSONArray;
+
 /*
  * the things to be replied to server as per the request
  */
@@ -40,24 +42,34 @@ public class ReplyServer {
 		return conn;
 	}
 	
-	public void getStatistics(Connection statistics){
+	public String getStatistics(Connection statistics) throws Exception{
 		
 		Statement stmt = null;
-		String query = "select domain, cardinality, column_length from "+ statTable +"\';" ;
+		String query = "select * from stats;" ;
 		ResultSet rs = null;
 		long cardinality = 0;
 		long domainCount = 0;
 		int length =0;
+		String reply =null;
 		
 		try{
 			stmt = statistics.createStatement();
-			System.out.println(query);
+//			System.out.println(query);
 			rs = stmt.executeQuery(query);
-			while (rs.next()) {
-			    System.out.println(rs.getString(1)); //gets the first column's rows.
-			}
 			
+			Convertor convertSet = new Convertor();
+			JSONArray jsonArray = new JSONArray();
+			jsonArray = convertSet.convertResultSetIntoJSON(rs);
+			reply = jsonArray.toString();
+//			System.out.println(jsonArray.length() + reply);
 			
+//			String reply = "{name : "+rs.getString(1);
+//			System.out.println(reply);
+//			while (rs.next()) {
+//			    System.out.println(rs.getString(3)); //gets the first column's rows.
+//			}
+//			
+//			
 			
 //			rs.next();
 //			domainCount = rs.getLong(1);
@@ -76,9 +88,11 @@ public class ReplyServer {
 //		}
 //		String str = "{cardinality: "+ cardinality + ", selectivity:"+ selectivityFactor+ ",length:"+ length +"}";
 //		return str;
+		return reply;
+	
 	}
 	
-	public void run() {
+	public String run() throws Exception {
 		// TODO Auto-generated method stub
 //		try {
 //			this.information = this.getConnection("information_schema");
@@ -99,8 +113,8 @@ public class ReplyServer {
 			
 		}
 		
-//		String str= getStatistics(stat);
-		getStatistics(stat);
+		String str= getStatistics(stat);
+//		getStatistics(stat);
 		
 		
 		try {
@@ -112,7 +126,7 @@ public class ReplyServer {
 		}
 		
 //		System.out.println(str);
-//		return str;
+		return str;
 	}
 	
 	

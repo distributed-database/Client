@@ -106,7 +106,7 @@ public class UpdateStatistics implements Runnable{
 		long cardinality = 0;
 		try{
 			stmt = conn.createStatement();
-			System.out.println(query);
+//			System.out.println(query);
 			rs = stmt.executeQuery(query);
 			if (rs == null){
 				return 0 ;
@@ -179,7 +179,7 @@ public class UpdateStatistics implements Runnable{
 	 * statistics database in stat
 	 * statistics table in tableName
 	 */
-	public void statistics(Connection conn, Connection stat, Connection information , String statTable){
+	public void statistics(Connection conn, Connection stat, Connection information , String statTable) throws SQLException{
 		
 		// Read table name
 		
@@ -195,8 +195,24 @@ public class UpdateStatistics implements Runnable{
 		int statCardinality = 0;
 		Statement stmt = null;
 		String command = null;
+		stmt= stat.createStatement();
+        command = "drop table if exists stats";
+        stmt.executeUpdate(command);
+        
+        command = "create table stats ( id INT NOT NULL AUTO_INCREMENT, " +
+                "relation_name VARCHAR(64) NOT NULL, " +
+                "attribute_name VARCHAR(64) NOT NULL," +
+                "domain BIGINT NOT NULL," +
+                "cardinality BIGINT NOT NULL, " +
+                "column_length INT NOT NULL, PRIMARY KEY ( id) )";
+        stmt.executeUpdate(command);
+        stmt.close();
+
+
 		try {
 			tableSet = getTables(conn);
+			tableSet.next();
+			tableSet.next();
 			while (tableSet.next()) {
 				tableName = tableSet.getString(3);
 				attributeSet = this.getAttributes(conn, tableName);
@@ -208,7 +224,7 @@ public class UpdateStatistics implements Runnable{
 					
 //					================================================
 					
-					System.out.println(tableName+"   "+  columnName + "   " + cardinality  + "     "+ domain);
+//					System.out.println(tableName+"   "+  columnName + "   " + cardinality  + "     "+ domain);
 					
 //					================================================
 					
@@ -297,7 +313,12 @@ public class UpdateStatistics implements Runnable{
 		}
 		
 
-		this.statistics(conn, stat, information, statTable);
+		try {
+			this.statistics(conn, stat, information, statTable);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		/*
 		 * close connection
