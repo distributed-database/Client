@@ -211,8 +211,8 @@ public class UpdateStatistics implements Runnable{
 
 		try {
 			tableSet = getTables(conn);
-			tableSet.next();
-			tableSet.next();
+//			tableSet.next();
+//			tableSet.next();
 			while (tableSet.next()) {
 				tableName = tableSet.getString(3);
 				attributeSet = this.getAttributes(conn, tableName);
@@ -267,7 +267,7 @@ public class UpdateStatistics implements Runnable{
 					
 					
 			    }
-				break;
+//				break;
 			}
 			stmt.close();
 			tableSet.close();
